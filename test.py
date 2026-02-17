@@ -1,9 +1,6 @@
-from datetime import date
-
-import requests
 from pydantic import ValidationError
 
-from app.models import Student
+from app.students.models import Student
 
 
 # def get_all_students():

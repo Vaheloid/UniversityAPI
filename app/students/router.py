@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from fastapi import APIRouter, Depends
 from app.students.dao import StudentDAO
 from app.students.rb import RBStudent
@@ -27,16 +29,16 @@ async def get_student_by_filter(request_body: RBStudent = Depends()) -> Student 
     return rez
 
 
-@router.post("/add/")
-async def add_student(student: SStudentAdd) -> dict:
-    check = await StudentDAO.add_student(**student.model_dump())
+@router.post("/add/", summary="Добавить одного студента")
+async def add_student(student: Annotated[SStudentAdd, Depends()]) -> dict:
+    check = await StudentDAO.add_student(student.model_dump())
     if check:
         return {"message": "Студент успешно добавлен!", "student": student}
     else:
         return {"message": "Ошибка при добавлении студента!"}
 
 
-@router.delete("dell/{student_id}")
+@router.delete("/dell/{student_id}", summary="Удалить одного студента")
 async def dell_student(student_id: int) -> dict:
     check = await StudentDAO.delete_student_by_id(student_id=student_id)
     if check:

@@ -61,6 +61,9 @@ class BaseDAO:
 
     @classmethod
     async def delete(cls, delete_all: bool = False, **filter_by):
+        if not delete_all and not filter_by:
+            raise ValueError("Необходимо указать хотя бы один параметр для удаления.")
+
         async with async_session_maker() as session:
             async with session.begin():
                 query = sqlalchemy_delete(cls.model).filter_by(**filter_by)

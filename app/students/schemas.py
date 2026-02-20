@@ -45,6 +45,8 @@ class Student(BaseModel):
         description="Дополнительные заметки, не более 500 символов",
     )
 
+    photo: str | None = Field(None, max_length=100, description="Фото студента")
+
     @field_validator("phone_number")
     def validate_phone_number(cls, value):
         if not re.match(r"^\+\d{1,15}$", value):
@@ -58,6 +60,14 @@ class Student(BaseModel):
         if value and value >= datetime.now().date():
             raise ValueError("Дата рождения должна быть в прошлом")
         return value
+
+    @field_validator("major", mode="before")
+    @classmethod
+    def get_major_name(cls, v):
+        # Если пришел объект Major, берем только его имя
+        if hasattr(v, "major_name"):
+            return v.major_name
+        return v
 
 
 class SStudentAdd(BaseModel):
